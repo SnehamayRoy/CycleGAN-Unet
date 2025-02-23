@@ -129,6 +129,18 @@ def main():
         lr=config.LEARNING_RATE,
         betas=(0.5, 0.999),
     )
+    start_decay_epoch = 60
+    total_decay_epochs = 60
+
+    scheduler_disc = optim.lr_scheduler.LambdaLR(
+        opt_disc,
+        lr_lambda=lambda epoch: 1.0 if epoch < start_decay_epoch else max(0.0, (start_decay_epoch + total_decay_epochs - epoch) / total_decay_epochs)
+    )
+
+    scheduler_gen = optim.lr_scheduler.LambdaLR(
+        opt_gen,
+        lr_lambda=lambda epoch: 1.0 if epoch < start_decay_epoch else max(0.0, (start_decay_epoch + total_decay_epochs - epoch) / total_decay_epochs)
+    )
 
     L1 = nn.L1Loss()
     mse = nn.MSELoss()
@@ -201,6 +213,8 @@ def main():
             g_scaler,
             epoch,
         )
+        scheduler_disc.step()
+        scheduler_gen.step()
 
         if config.SAVE_MODEL:
             save_checkpoint(gen_H, opt_gen, filename=config.CHECKPOINT_GEN_H)
