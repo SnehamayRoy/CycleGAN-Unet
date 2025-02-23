@@ -82,8 +82,8 @@ def train_fn(
 
             # add all togethor
             G_loss = (
-                loss_G_Z
-                + loss_G_H
+                loss_G_Z*5
+                + loss_G_H*5
                 + cycle_expertc_loss * config.LAMBDA_CYCLE
                 + cycle_original_loss * config.LAMBDA_CYCLE
                 + identity_original_loss * config.LAMBDA_IDENTITY
